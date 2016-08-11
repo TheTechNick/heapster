@@ -97,7 +97,7 @@ func (s *TCPSink) ExportEvents(batch *core.EventBatch) {
 			continue
 		}
 
-		_, err = s.client.Write(value)
+		_, err = s.client.Write([]byte(value + "\n"))
 		if err != nil {
 			glog.Warningf("Failed to send data to tcp endpoint: %v", err)
 		}
@@ -108,10 +108,10 @@ func (s *TCPSink) ExportEvents(batch *core.EventBatch) {
 }
 
 // Generate json value for event
-func getEventValue(event *kube_api.Event) ([]byte, error) {
+func getEventValue(event *kube_api.Event) (string, error) {
 	bytes, err := json.Marshal(event)
 	if err != nil {
-		return bytes, err
+		return "", err
 	}
-	return bytes, nil
+	return string(bytes), nil
 }
